@@ -32,6 +32,8 @@ import (
 	"github.com/google/certificate-transparency-go/jsonclient"
 	"github.com/google/certificate-transparency-go/scanner"
 	"github.com/google/certificate-transparency-go/x509"
+
+	"github.com/pkg/profile"
 )
 
 const (
@@ -60,6 +62,8 @@ var (
 
 	printChains = flag.Bool("print_chains", false, "If true prints the whole chain rather than a summary")
 	dumpDir     = flag.String("dump_dir", "", "Directory to store matched certificates in")
+
+	profiling = flag.Bool("profiling", false, "Enable profiling")
 )
 
 func dumpData(entry *ct.RawLogEntry) {
@@ -218,6 +222,11 @@ func main() {
 	s := scanner.NewScanner(logClient, opts)
 
 	ctx := context.Background()
+
+	if *profiling {
+	    defer profile.Start().Stop()
+	}
+
 	if *printChains {
 		s.Scan(ctx, logFullChain, logFullChain)
 	} else {
