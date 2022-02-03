@@ -61,8 +61,9 @@ var (
 	startIndex    = flag.Int64("start_index", 0, "Log index to start scanning at")
 	endIndex      = flag.Int64("end_index", 0, "Log index to end scanning at (non-inclusive, 0 = end of log)")
 
-	printChains = flag.Bool("print_chains", false, "If true prints the whole chain rather than a summary")
-	dumpDir     = flag.String("dump_dir", "", "Directory to store matched certificates in")
+	printChains   = flag.Bool("print_chains", false, "If true prints the whole chain rather than a summary")
+	dumpDir       = flag.String("dump_dir", "", "Directory to store matched certificates in")
+	dumpFullChain = flag.Bool("dump_full_chain", true, "Dump the entire chain instead of just the leaf certificates")
 
 	profiling = flag.Bool("profiling", false, "Enable profiling")
 )
@@ -92,11 +93,14 @@ func dumpData(entry *ct.RawLogEntry) {
 		}
 	}
 
-	for ii := 0; ii < len(entry.Chain); ii++ {
-		name := fmt.Sprintf("%s-%014d-%02d.der", prefix, entry.Index, ii)
-		filename := path.Join(*dumpDir, name)
-		if err := ioutil.WriteFile(filename, entry.Chain[ii].Data, 0644); err != nil {
-			log.Printf("Failed to dump data for CA at index %d: %v", entry.Index, err)
+	if *dumpFullChain {
+		log.Print("dumping full chain")
+		for ii := 0; ii < len(entry.Chain); ii++ {
+			name := fmt.Sprintf("%s-%014d-%02d.der", prefix, entry.Index, ii)
+			filename := path.Join(*dumpDir, name)
+			if err := ioutil.WriteFile(filename, entry.Chain[ii].Data, 0644); err != nil {
+				log.Printf("Failed to dump data for CA at index %d: %v", entry.Index, err)
+			}
 		}
 	}
 }
