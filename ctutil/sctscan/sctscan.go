@@ -43,6 +43,7 @@ var (
 	numWorkers    = flag.Int("num_workers", 2, "Number of concurrent matchers")
 	parallelFetch = flag.Int("parallel_fetch", 2, "Number of concurrent GetEntries fetches")
 	startIndex    = flag.Int64("start_index", 0, "Log index to start scanning at")
+	userAgent     = flag.String("user_agent", "ct-go-sctscan/1.0", "User agent for interaction with CT log")
 )
 
 func main() {
@@ -62,7 +63,7 @@ func main() {
 			ExpectContinueTimeout: 1 * time.Second,
 		},
 	}
-	logClient, err := client.New(*logURI, hc, jsonclient.Options{UserAgent: "ct-go-sctscan/1.0"})
+	logClient, err := client.New(*logURI, hc, jsonclient.Options{UserAgent: *userAgent})
 	if err != nil {
 		glog.Exitf("Failed to create log client: %v", err)
 	}

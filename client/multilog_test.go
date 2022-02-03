@@ -201,7 +201,7 @@ func TestNewTemporalLogClient(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		_, err := client.NewTemporalLogClient(test.cfg, nil)
+		_, err := client.NewTemporalLogClient(test.cfg, nil, "ct-go-multilog-test/1.0")
 		if err != nil {
 			if test.wantErr == "" {
 				t.Errorf("NewTemporalLogClient(%+v)=nil,%v; want _,nil", test.cfg, err)
@@ -314,7 +314,7 @@ func TestIndexByDate(t *testing.T) {
 		{cfg: boundedCfg, when: time.Date(2015, 9, 19, 11, 00, 00, 00, time.UTC), wantErr: true},
 	}
 	for _, test := range tests {
-		tlc, err := client.NewTemporalLogClient(test.cfg, nil)
+		tlc, err := client.NewTemporalLogClient(test.cfg, nil, "ct-go-multilog-test/1.0")
 		if err != nil {
 			t.Errorf("NewTemporalLogClient(%+v)=nil, %v; want _,nil", test.cfg, err)
 			continue
@@ -424,7 +424,7 @@ func TestTemporalAddChain(t *testing.T) {
 
 	ctx := context.Background()
 	for _, test := range tests {
-		tlc, err := client.NewTemporalLogClient(test.cfg, nil)
+		tlc, err := client.NewTemporalLogClient(test.cfg, nil, "ct-go-multilog-test/1.0")
 		if err != nil {
 			t.Errorf("NewTemporalLogClient(%+v)=nil, %v; want _,nil", test.cfg, err)
 			continue
@@ -465,7 +465,7 @@ func TestTemporalAddChainErrors(t *testing.T) {
 	}
 
 	ctx := context.Background()
-	tlc, err := client.NewTemporalLogClient(cfg, nil)
+	tlc, err := client.NewTemporalLogClient(cfg, nil, "ct-go-multilog-test/1.0")
 	if err != nil {
 		t.Fatalf("NewTemporalLogClient(%+v)=nil, %v; want _,nil", cfg, err)
 	}

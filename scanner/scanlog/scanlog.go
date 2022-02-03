@@ -42,7 +42,8 @@ const (
 )
 
 var (
-	logURI = flag.String("log_uri", "https://ct.googleapis.com/aviator", "CT log base URI")
+	logURI    = flag.String("log_uri", "https://ct.googleapis.com/aviator", "CT log base URI")
+	userAgent = flag.String("user_agent", "ct-go-scanlog/1.0", "User agent for interaction with CT log")
 
 	matchSubjectRegex = flag.String("match_subject_regex", ".*", "Regex to match CN/SAN")
 	matchIssuerRegex  = flag.String("match_issuer_regex", "", "Regex to match in issuer CN")
@@ -200,7 +201,7 @@ func main() {
 			IdleConnTimeout:       90 * time.Second,
 			ExpectContinueTimeout: 1 * time.Second,
 		},
-	}, jsonclient.Options{UserAgent: "ct-go-scanlog/1.0"})
+	}, jsonclient.Options{UserAgent: *userAgent})
 	if err != nil {
 		log.Fatal(err)
 	}

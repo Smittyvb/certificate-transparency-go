@@ -53,6 +53,7 @@ var (
 	idleTimeout           = flag.Duration("idle_conn_timeout", 90*time.Second, "Idle connections with no use within this period will be closed (see http.Transport)")
 	disableKeepAlive      = flag.Bool("disable_keepalive", false, "Disable HTTP Keep-Alive (see http.Transport)")
 	expectContinueTimeout = flag.Duration("expect_continue_timeout", time.Second, "Amount of time to wait for a response if request uses Expect: 100-continue (see http.Transport")
+	userAgent             = flag.String("user_agent", "ct-go-preloader/1.0", "User agent for interaction with CT log")
 )
 
 func recordSct(addedCerts chan<- *preload.AddedCert, certDer ct.ASN1Cert, sct *ct.SignedCertificateTimestamp) {
@@ -165,7 +166,7 @@ func main() {
 	fetchLogClient, err := client.New(*sourceLogURI, &http.Client{
 		Timeout:   10 * time.Second,
 		Transport: transport,
-	}, jsonclient.Options{UserAgent: "ct-go-preloader/1.0"})
+	}, jsonclient.Options{UserAgent: *userAgent})
 	if err != nil {
 		glog.Exitf("Failed to create client for source log: %v", err)
 	}
@@ -200,12 +201,12 @@ func main() {
 		if err != nil {
 			glog.Exitf("Failed to load temporal log config: %v", err)
 		}
-		submitLogClient, err = client.NewTemporalLogClient(cfg, &http.Client{Transport: transport})
+		submitLogClient, err = client.NewTemporalLogClient(cfg, &http.Client{Transport: transport}, *userAgent)
 		if err != nil {
 			glog.Exitf("Failed to create client for destination temporal log: %v", err)
 		}
 	} else {
-		submitLogClient, err = client.New(*targetLogURI, &http.Client{Transport: transport}, jsonclient.Options{UserAgent: "ct-go-preloader/1.0"})
+		submitLogClient, err = client.New(*targetLogURI, &http.Client{Transport: transport}, jsonclient.Options{UserAgent: *userAgent})
 		if err != nil {
 			glog.Exitf("Failed to create client for destination log: %v", err)
 		}

@@ -62,6 +62,7 @@ var (
 	prevSize        = flag.Int64("prev_size", -1, "Previous tree size to get consistency against")
 	prevHash        = flag.String("prev_hash", "", "Previous tree hash to check against (as hex string or base64)")
 	leafHash        = flag.String("leaf_hash", "", "Leaf hash to retrieve (as hex string or base64)")
+	userAgent       = flag.String("user_agent", "ct-go-ctclient/1.0", "User agent for interaction with CT log")
 )
 
 func signatureToString(signed *ct.DigitallySigned) string {
@@ -468,7 +469,7 @@ func main() {
 			TLSClientConfig:       tlsCfg,
 		},
 	}
-	opts := jsonclient.Options{UserAgent: "ct-go-ctclient/1.0"}
+	opts := jsonclient.Options{UserAgent: *userAgent}
 	if *pubKey != "" {
 		pubkey, err := ioutil.ReadFile(*pubKey)
 		if err != nil {
